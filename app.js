@@ -1,15 +1,16 @@
 const express = require('express');
 const app = express();
 const port = 5000;
+require('dotenv/config');
 
 const { Pool } = require('pg');
 
 const pg = new Pool({
-  user: 'root',
-  host: 'pg-c8c3e.vpc-pub-cdb-kr.ntruss.com',
-  database: 'devitter',
-  password: 'devback1!',
-  port: 5432,
+  user: process.env.USER,
+  host: process.env.HOST,
+  database: process.env.DB,
+  password: process.env.PW,
+  port: process.env.PORT,
 });
 
 const bodyParser = require('body-parser');
