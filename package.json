@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon ./app",
     "dev": "node ./app",
+    "build" : "parcel ./app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
