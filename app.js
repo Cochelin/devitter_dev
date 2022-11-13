@@ -298,8 +298,8 @@ app.get('/subBookmark/get', (req, resp) => {
 // get subbookmark by bookmarkid
 
 app.get('/subBookmark/sub/get/:parent', (req, resp) => {
-  const id = req.params.id;
-  pg.query('SELECT * FROM subbookmark where parent = $1;', [id])
+  const parent = req.params.parent;
+  pg.query('SELECT * FROM subbookmark where parent = $1;', [parent])
     .then((res) => {
       const rows = res.rows;
       console.log(rows[0]);
