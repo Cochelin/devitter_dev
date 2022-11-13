@@ -295,6 +295,21 @@ app.get('/subBookmark/get', (req, resp) => {
     });
 });
 
+// get subbookmark by bookmarkid
+
+app.get('/subBookmark/get/:parent', (req, resp) => {
+  const id = req.params.id;
+  pg.query('SELECT * FROM subbookmark where parent = $1;', [id])
+    .then((res) => {
+      const rows = res.rows;
+      console.log(rows[0]);
+      resp.status(200).json(rows);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 // get subbookmark by id
 
 app.get('/subBookmark/get/:id', (req, resp) => {
