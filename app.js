@@ -179,23 +179,6 @@ app.get('/bookmark/get', (req, resp) => {
     });
 });
 
-// get bookmark by category
-
-app.get('/bookmark/get/category', (req, resp) => {
-  const category = req.query.category;
-  pg.query(
-    ('SELECT * FROM bookmark WHERE category LIKE $1;', [category])
-      .then((res) => {
-        const rows = res.rows;
-        console.log(rows[0]);
-        resp.status(200).json(rows);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  );
-});
-
 // get bookmark by id
 
 app.get('/bookmark/get/:id', (req, resp) => {
@@ -272,16 +255,17 @@ app.post('/bookmark/tweets/create', (req, resp) => {
     });
 });
 
-// post bookmark_tweet
+// get bookmark tweet
 
-app.post('/bookmark/tweets/create', (req, resp) => {
-  const { user_id, bookmark_id } = req.body;
-  pg.query(
-    'INSERT INTO bookmark_tweet (user_id, bookmark_id) VALUES ($1, $2) RETURNING *',
-    [user_id, bookmark_id]
-  )
+app.get('/bookmark/tweets/sub', (req, resp) => {
+  const bookmark_id = req.query.bookmark_id;
+  pg.query('SELECT * FROM bookmark_tweet WHERE bookmark_id::text LIKE $1;', [
+    bookmark_id,
+  ])
     .then((res) => {
-      resp.status(201).json(`User added with ID: ${res.rows[0].id}`);
+      const rows = res.rows;
+      const result = rows.map((el) => el.tweet_id);
+      resp.status(200).json(result);
     })
     .catch((err) => {
       console.log(err);
