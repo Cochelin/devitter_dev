@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 5000;
 require('dotenv/config');
@@ -15,6 +16,7 @@ const pg = new Pool({
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -52,7 +54,7 @@ app.get('/user/get/:id', (req, resp) => {
 
 // post user
 
-app.get('/user/create', (req, resp) => {
+app.post('/user/create', (req, resp) => {
   const { name, email, profile, nickname } = req.body;
   pg.query(
     'INSERT INTO users (name, email, profile, nickname) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -68,7 +70,7 @@ app.get('/user/create', (req, resp) => {
 
 // delete user
 
-app.get('/user/delete/:id', (req, resp) => {
+app.delete('/user/delete/:id', (req, resp) => {
   const id = req.params.id;
   pg.query('DELETE FROM users WHERE id = $1', [id])
     .then((res) => {
@@ -112,7 +114,7 @@ app.get('/tweet/get/:id', (req, resp) => {
 
 // post tweet
 
-app.get('/tweet/create', (req, resp) => {
+app.post('/tweet/create', (req, resp) => {
   const {
     profile,
     tweet_id,
@@ -146,7 +148,7 @@ app.get('/tweet/create', (req, resp) => {
 
 // delete tweet
 
-app.get('/tweet/delete/:id', (req, resp) => {
+app.delete('/tweet/delete/:id', (req, resp) => {
   const id = req.params.id;
   pg.query('DELETE FROM tweets WHERE id = $1', [id])
     .then((res) => {
@@ -190,7 +192,7 @@ app.get('/bookmark/get/:id', (req, resp) => {
 
 // post bookmark
 
-app.get('/bookmark/create', (req, resp) => {
+app.post('/bookmark/create', (req, resp) => {
   const { user_id, name } = req.body;
   pg.query('INSERT INTO bookmark (user_id, name) VALUES ($1, $2) RETURNING *', [
     user_id,
@@ -206,7 +208,7 @@ app.get('/bookmark/create', (req, resp) => {
 
 // delete tweet
 
-app.get('/bookmark/delete/:id', (req, resp) => {
+app.delete('/bookmark/delete/:id', (req, resp) => {
   const id = req.params.id;
   pg.query('DELETE FROM bookmark WHERE id = $1', [id])
     .then((res) => {
@@ -250,7 +252,7 @@ app.get('/bookmark/tweets/get/:id', (req, resp) => {
 
 // post bookmark_tweet
 
-app.get('/bookmark/tweets/create', (req, resp) => {
+app.post('/bookmark/tweets/create', (req, resp) => {
   const { user_id, bookmark_id } = req.body;
   pg.query(
     'INSERT INTO bookmark_tweet (user_id, bookmark_id) VALUES ($1, $2) RETURNING *',
@@ -266,7 +268,7 @@ app.get('/bookmark/tweets/create', (req, resp) => {
 
 // delete bookmark tweet
 
-app.get('/bookmark/tweets/delete/:id', (req, resp) => {
+app.delete('/bookmark/tweets/delete/:id', (req, resp) => {
   const id = req.params.id;
   pg.query('DELETE FROM bookmark_tweet WHERE id = $1', [id])
     .then((res) => {
@@ -310,7 +312,7 @@ app.get('/subBookmark/get/:id', (req, resp) => {
 
 // post subbookmark
 
-app.get('/subBookmark/create', (req, resp) => {
+app.post('/subBookmark/create', (req, resp) => {
   const { name, parent, user_id } = req.body;
   pg.query(
     'INSERT INTO subbookmark (name, parent, user_id) VALUES ($1, $2, $3) RETURNING *',
@@ -326,7 +328,7 @@ app.get('/subBookmark/create', (req, resp) => {
 
 // delete bookmark tweet
 
-app.get('/subBookmark/delete/:id', (req, resp) => {
+app.delete('/subBookmark/delete/:id', (req, resp) => {
   const id = req.params.id;
   pg.query('DELETE FROM subbookmark WHERE id = $1', [id])
     .then((res) => {
