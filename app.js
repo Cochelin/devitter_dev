@@ -124,9 +124,11 @@ app.post('/tweet/create', (req, resp) => {
     tweet_retweet,
     tweet_heart,
     tweet_link,
+    category,
+    media,
   } = req.body;
   pg.query(
-    'INSERT INTO tweets (profile, tweet_id, tweet_name, tweet_content, date, tweet_retweet, tweet_heart, tweet_link) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    'INSERT INTO tweets (profile, tweet_id, tweet_name, tweet_content, date, tweet_retweet, tweet_heart, tweet_link, category, media) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
     [
       profile,
       tweet_id,
@@ -136,6 +138,8 @@ app.post('/tweet/create', (req, resp) => {
       tweet_retweet,
       tweet_heart,
       tweet_link,
+      category,
+      media,
     ]
   )
     .then((res) => {
@@ -173,6 +177,23 @@ app.get('/bookmark/get', (req, resp) => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+// get bookmark by category
+
+app.get('/bookmark/get/category', (req, resp) => {
+  const category = req.query.category;
+  pg.query(
+    ('SELECT * FROM bookmark WHERE category LIKE $1;', [category])
+      .then((res) => {
+        const rows = res.rows;
+        console.log(rows[0]);
+        resp.status(200).json(rows);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  );
 });
 
 // get bookmark by id
@@ -235,15 +256,16 @@ app.get('/bookmark/tweets/get', (req, resp) => {
     });
 });
 
-// get bookmark_tweet by id
+// post bookmark_tweet
 
-app.get('/bookmark/tweets/get/:id', (req, resp) => {
-  const id = req.params.id;
-  pg.query('SELECT * FROM bookmark_tweet where id = $1;', [id])
+app.post('/bookmark/tweets/create', (req, resp) => {
+  const { tweet_id, user_id, bookmark_id } = req.body;
+  pg.query(
+    'INSERT INTO bookmark_tweet (tweet_id, user_id, bookmark_id) VALUES ($1, $2, $3) RETURNING *',
+    [tweet_id, user_id, bookmark_id]
+  )
     .then((res) => {
-      const rows = res.rows;
-      console.log(rows[0]);
-      resp.status(200).json(rows);
+      resp.status(201).json(`User added with ID: ${res.rows[0].id}`);
     })
     .catch((err) => {
       console.log(err);
